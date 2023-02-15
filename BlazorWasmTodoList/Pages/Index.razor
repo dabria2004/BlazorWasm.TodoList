@@ -1,0 +1,50 @@
+﻿@page "/"
+
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using BlazorWasmTodoList.Models
+@using Microsoft.AspNetCore.Components
+@inject IJSRuntime JSRuntime
+
+<h1>Todolist</h1>
+
+<input type="text" @bind-value="newItemDescription" />
+<button @onclick="AddItem">Add</button>
+
+<ul>
+    @foreach (var item in todoItems)
+    {
+        <li>
+            <input type="checkbox" @bind-value="item.IsCompleted" />
+            @item.Description
+        </li>
+    }
+</ul>
+
+@code {
+    private List<TodoItem> todoItems = new List<TodoItem>();
+    private string newItemDescription;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var savedItemsJson = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "todoItems");
+        if (!string.IsNullOrEmpty(savedItemsJson))
+        {
+            todoItems = JsonSerializer.Deserialize<List<TodoItem>>(savedItemsJson);
+        }
+    }
+
+    private void AddItem()
+    {
+        if (!string.IsNullOrEmpty(newItemDescription))
+        {
+            todoItems.Add(new TodoItem
+            {
+                Description = newItemDescription,
+                IsCompleted = false
+            });
+            JSRuntime.InvokeVoidAsync("localStorage.setItem", "todoItems", JsonSerializer.Serialize(todoItems));
+            newItemDescription = string.Empty;
+        }
+    }
+}
