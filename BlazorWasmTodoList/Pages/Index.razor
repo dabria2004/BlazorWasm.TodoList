@@ -6,20 +6,20 @@
 @using Microsoft.AspNetCore.Components
 @inject IJSRuntime JSRuntime
 
-<h1>Todolist</h1>
-
-<input type="text" @bind-value="newItemDescription" />
-<button @onclick="AddItem">Add</button>
-
-<ul>
-    @foreach (var item in todoItems)
-    {
-        <li>
-            <input type="checkbox" @bind-value="item.IsCompleted" />
-            @item.Description
-        </li>
-    }
-</ul>
+<div class="container justify-content-center">
+    <div id="newtask">
+        <input type="text" placeholder="Task to be done.." @bind-value="newItemDescription">
+        <button id="push" @onclick="AddItem">Add</button>
+    </div>
+    <div class="mt-2" style="width: 18rem;" id="tasks">
+        <ul class="list-group list-group-flush a align-self-start">
+            @foreach (var item in todoItems)
+            {
+                <li class="list-group-item">@item.Description</li>
+            }
+        </ul>
+    </div>
+</div>
 
 @code {
     private List<TodoItem> todoItems = new List<TodoItem>();
@@ -47,4 +47,5 @@
             newItemDescription = string.Empty;
         }
     }
+
 }
